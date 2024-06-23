@@ -22,7 +22,6 @@ namespace UnrealBuildTool.Rules
             PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
             PublicIncludePaths.AddRange(new string[] {
-                "OpenCL/Public",
                 Path.Combine(ThirdPartyPath, "OpenCL", "Include")
             });
 
@@ -33,7 +32,6 @@ namespace UnrealBuildTool.Rules
                     "CoreUObject",
                     "Engine",
                     "RenderCore",
-                    "ShaderCore",
                     "RHI"
                 }
                 );
@@ -43,15 +41,11 @@ namespace UnrealBuildTool.Rules
             string NvidiaLibrariesPath = Path.Combine(OpenCLLibrariesPath, "NVIDIA", PlatformString);
             string IntelLibrariesPath = Path.Combine(OpenCLLibrariesPath, "Intel", PlatformString);
             string AmdLibrariesPath = Path.Combine(OpenCLLibrariesPath, "AMD", PlatformString);
-            if (Target.Platform == UnrealTargetPlatform.Win64 || Target.Platform == UnrealTargetPlatform.Win32)
+            if (Target.Platform == UnrealTargetPlatform.Win64)
             {
                 PublicAdditionalLibraries.Add(Path.Combine(NvidiaLibrariesPath, "OpenCL.lib"));
                 PublicAdditionalLibraries.Add(Path.Combine(IntelLibrariesPath, "OpenCL.lib"));
                 PublicAdditionalLibraries.Add(Path.Combine(AmdLibrariesPath, "OpenCL.lib"));
-            }
-            else if (Target.Platform == UnrealTargetPlatform.Mac)
-            {
-                PublicAdditionalFrameworks.Add(new UEBuildFramework("OpenCL"));
             }
             //Todo: add linux support
         }

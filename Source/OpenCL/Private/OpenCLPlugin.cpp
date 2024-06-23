@@ -1,6 +1,6 @@
 // Copyright 1998-2014 Epic Games, Inc. All Rights Reserved.
 
-#include "ModuleManager.h"
+#include "Modules/ModuleManager.h"
 #include "IOpenCLPlugin.h"
 #include "CL/opencl.h"
 #include "OCLUtility.h"
@@ -16,7 +16,7 @@ class OpenCLPlugin : public IOpenCLPlugin
 	virtual void RunKernelOnDevices(const FString& KernelString, const FString& KernelName, const FString& Args, TFunction<void(const FString&, bool)> ResultCallback, const TArray<FOpenCLDeviceData>& OutDevices) override;
 
 private:
-	TArray<FOpenCLDeviceData> Devices;
+	TArray<FOpenCLDeviceData> CLDevices;
 
 	TArray<cl_device_id*> DeviceIdsMemoryList;
 	bool bHasEnumeratedOnce;
@@ -31,13 +31,13 @@ void OpenCLPlugin::StartupModule()
 {
 	//Enumerate once on startup
 	bHasEnumeratedOnce = false;
-	EnumerateDevices(Devices);
+	EnumerateDevices(CLDevices);
 
 	//Log all devices
 	UE_LOG(LogOpenCL, Log, TEXT("OpenCL Info:"));
-	for (auto Device : Devices)
+	for (auto CLDevice : CLDevices)
 	{
-		UE_LOG(LogOpenCL, Log, TEXT("%s"), *Device.ToPrintString());
+		UE_LOG(LogOpenCL, Log, TEXT("%s"), *CLDevice.ToPrintString());
 	}
 }
 
@@ -51,7 +51,7 @@ void OpenCLPlugin::EnumerateDevices(TArray<FOpenCLDeviceData>& OutDevices, bool 
 {
 	if (bHasEnumeratedOnce && !bForceRefresh)
 	{
-		OutDevices = Devices;
+		OutDevices = CLDevices;
 		return;
 	}
 
@@ -245,7 +245,7 @@ void OpenCLPlugin::RunKernelOnDevices(const FString& KernelString, const FString
 
 void OpenCLPlugin::FreeDeviceMemory()
 {
-	Devices.Empty();
+	CLDevices.Empty();
 
 	//Free each of our list of lists
 	for (auto DeviceList : DeviceIdsMemoryList)

@@ -1,6 +1,6 @@
 #include "OpenCLComponent.h"
 #include "EngineMinimal.h"
-#include "Async.h"
+#include "Async/Async.h"
 #include "IOpenCLPlugin.h"
 
 UOpenCLComponent::UOpenCLComponent(const FObjectInitializer &init) : UActorComponent(init)
@@ -21,19 +21,19 @@ bool UOpenCLComponent::IsWatchingFolders()
 
 bool UOpenCLComponent::HasValidHardware()
 {
-	TArray<FOpenCLDeviceData> Devices = EnumerateDevices();
-	IOpenCLPlugin::Get().EnumerateDevices(Devices);
-	return Devices.Num() > 0;
+	TArray<FOpenCLDeviceData> CLDevices = EnumerateDevices();
+	IOpenCLPlugin::Get().EnumerateDevices(CLDevices);
+	return CLDevices.Num() > 0;
 }
 
 TArray<FOpenCLDeviceData> UOpenCLComponent::EnumerateDevices()
 {
-	TArray<FOpenCLDeviceData> Devices;
+	TArray<FOpenCLDeviceData> CLDevices;
 	if (IOpenCLPlugin::Get().IsAvailable())
 	{
-		IOpenCLPlugin::Get().EnumerateDevices(Devices);
+		IOpenCLPlugin::Get().EnumerateDevices(CLDevices);
 	}
-	return Devices;
+	return CLDevices;
 }
 
 bool UOpenCLComponent::ReadKernelFromFile(const FString& FilePath, FString& OutKernelSource, bool bIsContentRelative /*= true*/)
